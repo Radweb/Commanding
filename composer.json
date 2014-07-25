@@ -8,6 +8,11 @@
     "suggest": {
         "illuminate/validation": "Required to use the RuleBaseCommandValidator"
     },
+    "autoload": {
+        "psr-4": {
+            "Radweb\\Commanding\\": "src"
+        }
+    },
     "license": "MIT",
     "authors": [
         {
