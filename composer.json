@@ -1,0 +1,19 @@
+{
+    "name": "radweb/commanding",
+    "description": "PHP Commands, Command Bus and Command Handlers",
+    "require": {
+        "illuminate/container": "4.*",
+        "illuminate/support": "4.*"
+    },
+    "suggest": {
+        "illuminate/validation": "Required to use the RuleBaseCommandValidator"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dan Harper",
+            "email": "intouch@danharper.me"
+        }
+    ],
+    "minimum-stability": "stable"
+}
