@@ -64,7 +64,11 @@ class ChangeSubscriptionPlan implements CommandHandler {
         // ...
     }
 
-    public function handle(ChangeSubscriptionPlanCommand $command)
+    /**
+     * @var ChangeSubscriptionPlanCommand $command
+     * @return mixed
+     */
+    public function handle(Command $command)
     {
         // do something...
     }
@@ -111,35 +115,11 @@ class ChangeSubscriptionPlanValidator extends CommandValidator {
 // or, you can write an entirely custom one by implementing `Radweb\Commanding\CommandValidator`
 ```
 
-You may also want to separate Authentication logic: (ensure you're decorating with the `AuthenticatingCommandBusDecorator` below)
-
-```php
-class ChangeSubscriptionPlanAuthenticator implements CommandAuthenticator {
-
-    public function __construct(Auth $auth)
-    {
-        $this->currentUser = $auth->getCurrentUser();
-    }
-
-    /**
-     * @return boolean
-     */
-    public function authenticate(Command $command)
-    {
-        // return true/false
-        return $this->currentUser->isAccountAdministrator();
-    }
-
-}
-```
-
 ## Command Translating
 
 Given the Command `ChangeSubscriptionPlanCommand`, the associated Command Handler would be `ChangeSubscriptionPlan` (remove "Command"). This should implement `Radweb\Commanding\CommandHandler`.
 
 The associated Command Validator would be `ChangeSubscriptionPlanValidator` (swap "Command" for "Validator"). This should implement `Radweb\Commanding\CommandValidator`.
-
-The associated Command Authenticator would be `ChangeSubscriptionPlanAuthenticator` (swap "Command" for "Authenticator"). This should implement `Radweb\Commanding\CommandAuthenticator`.
 
 ## Buses
 
@@ -148,8 +128,6 @@ The associated Command Authenticator would be `ChangeSubscriptionPlanAuthenticat
 Additional Command Buses are included which decorate the `BasicCommandBus` to provide additional behaviour.
 
 `ValidatingCommandBusDecorator` will execute a `CommandValidator` first.
-
-`AuthenticatingCommandBusDecorator` will execute a `CommandAuthenticator` first.
 
 `LoggingCommandBusDecorator` will write to a log before executing a command, and log whenever a `CommandBusException` is thrown.
 
@@ -167,19 +145,13 @@ $container->extend('Radweb\Commanding\CommandBus', function(CommandBus $b, Conta
     return new ValidatingCommandBusDecorator($b, $c, $c->make('Radweb\Commanding\CommandTranslator');
 });
 
-// Decorate with the authenticating command bus, providing its dependencies
-$container->extend('Radweb\Commanding\CommandBus', function(CommandBus $b, Container $c) {
-    // $b is now "ValidatingCommandBus"
-    return new AuthenticatingCommandBusDecorator($b, $c, $c->make('Radweb\Commanding\CommandTranslator');
-});
-
 // Decorate with the logging command bus, providing its dependencies
 $container->extend('Radweb\Commanding\CommandBus', function(CommandBus $b, Container $c) {
-    // $b is now "AuthenticatingCommandBus"
+    // $b is now "ValidatingCommandBus"
     return new LoggingCommandBusDecorator($b, $c->make('Psr\Log\LoggerInterface');
 });
 
-// 'Radweb\Commanding\CommandBus' is now 'LoggerCommandBusDecorator', which wraps 'AuthenticatingCommandBusDecorator', which wraps 'ValidatingCommandBusDecorator', which wraps 'BasicCommandBus'
+// 'Radweb\Commanding\CommandBus' is now 'LoggerCommandBusDecorator', which wraps 'ValidatingCommandBusDecorator', which wraps 'BasicCommandBus'
 ```
 
 You can write your own Command Bus, or a decorator for it, simply by implementing the `Radweb\Commanding\CommandBus` interface. If you're writing a decorator, you should accept a `CommandBus` as a dependency and forward calls onto it.

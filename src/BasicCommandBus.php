@@ -8,12 +8,12 @@ class BasicCommandBus implements CommandBus {
 	/**
 	 * @var \Illuminate\Container\Container
 	 */
-	private $container;
+	protected $container;
 
 	/**
 	 * @var CommandTranslator
 	 */
-	private $translator;
+	protected $translator;
 
 	public function __construct(Container $container, CommandTranslator $translator)
 	{
@@ -30,11 +30,23 @@ class BasicCommandBus implements CommandBus {
 	 */
 	public function execute(Command $command)
 	{
-		$handler = $this->translator->toHandler($command);
+		$handlerName = $this->translator->toHandler($command);
 
-		if (! class_exists($handler)) throw new CommandResolutionException($command, $handler);
+		if (! class_exists($handlerName)) throw new CommandResolutionException($command, $handlerName);
 
-		return $this->container->make($handler)->handle($command);
+		$handler = $this->container->make($handlerName);
+
+		return $this->dispatch($command, $handler);
+	}
+
+	/**
+	 * @param Command $command
+	 * @param CommandHandler $handler
+	 * @return mixed
+	 */
+	protected function dispatch(Command $command, CommandHandler $handler)
+	{
+		return $handler->handle($command);
 	}
 
 }
