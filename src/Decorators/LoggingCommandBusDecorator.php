@@ -1,11 +1,11 @@
-<?php namespace Radweb\Commanding\Buses;
+<?php namespace Radweb\Commanding\Decorators;
 
 use Psr\Log\LoggerInterface;
 use Radweb\Commanding\Command;
 use Radweb\Commanding\CommandBus;
 use Radweb\Commanding\Exceptions\CommandBusException;
 
-class LoggingCommandBus implements CommandBus {
+class LoggingCommandBusDecorator implements CommandBus {
 
 	/**
 	 * @var CommandBus

@@ -1,4 +1,4 @@
-<?php namespace Radweb\Commanding\Buses;
+<?php namespace Radweb\Commanding\Decorators;
 
 use Illuminate\Container\Container;
 use Radweb\Commanding\Command;
@@ -7,7 +7,7 @@ use Radweb\Commanding\CommandTranslator;
 use Radweb\Commanding\Exceptions\UnauthorisedCommandException;
 use Radweb\Commanding\Exceptions;
 
-class AuthenticatingCommandBus implements CommandBus {
+class AuthenticatingCommandBusDecorator implements CommandBus {
 
 	/**
 	 * @var CommandBus

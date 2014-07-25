@@ -1,4 +1,4 @@
-<?php namespace Radweb\Commanding\Buses;
+<?php namespace Radweb\Commanding\Decorators;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Contracts\MessageProviderInterface;
@@ -9,7 +9,7 @@ use Radweb\Commanding\CommandTranslator;
 use Radweb\Commanding\Exceptions\InvalidCommandException;
 use Radweb\Commanding\Exceptions;
 
-class ValidatingCommandBus implements CommandBus {
+class ValidatingCommandBusDecorator implements CommandBus {
 
 	/**
 	 * @var CommandBus

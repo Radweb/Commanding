@@ -1,9 +1,6 @@
-<?php namespace Radweb\Commanding\Buses;
+<?php namespace Radweb\Commanding;
 
 use Illuminate\Container\Container;
-use Radweb\Commanding\Command;
-use Radweb\Commanding\CommandBus;
-use Radweb\Commanding\CommandTranslator;
 use Radweb\Commanding\Exceptions\CommandResolutionException;
 
 class BasicCommandBus implements CommandBus {

@@ -72,7 +72,7 @@ class ChangeSubscriptionPlan implements CommandHandler {
 }
 ```
 
-You may not want to crowd your Command Handler with validation logic. Instead, you can use a CommandValidator (ensure you're running the `ValidatingCommandBus` below).
+You may not want to crowd your Command Handler with validation logic. Instead, you can use a CommandValidator (ensure you're running the `ValidatingCommandBusDecorator` below).
 
 ```php
 // write a Rule-Based validator:
@@ -111,7 +111,7 @@ class ChangeSubscriptionPlanValidator extends CommandValidator {
 // or, you can write an entirely custom one by implementing `Radweb\Commanding\CommandValidator`
 ```
 
-You may also want to separate Authentication logic: (ensure you're running the `AuthenticatingCommandBus` below)
+You may also want to separate Authentication logic: (ensure you're decorating with the `AuthenticatingCommandBusDecorator` below)
 
 ```php
 class ChangeSubscriptionPlanAuthenticator implements CommandAuthenticator {
@@ -147,11 +147,11 @@ The associated Command Authenticator would be `ChangeSubscriptionPlanAuthenticat
 
 Additional Command Buses are included which decorate the `BasicCommandBus` to provide additional behaviour.
 
-`ValidatingCommandBus` will execute a `CommandValidator` first.
+`ValidatingCommandBusDecorator` will execute a `CommandValidator` first.
 
-`AuthenticatingCommandBus` will execute a `CommandAuthenticator` first.
+`AuthenticatingCommandBusDecorator` will execute a `CommandAuthenticator` first.
 
-`LoggingCommandBus` will write to a log before executing a command, and log whenever a `CommandBusException` is thrown.
+`LoggingCommandBusDecorator` will write to a log before executing a command, and log whenever a `CommandBusException` is thrown.
 
 ## Decorating
 
@@ -164,27 +164,27 @@ $container->bind('Radweb\Commanding\CommandBus', 'Radweb\Commanding\Buses\BasicC
 // Decorate with the validating command bus, providing its dependencies
 $container->extend('Radweb\Commanding\CommandBus', function(CommandBus $b, Container $c) {
     // $b is now "BasicCommandBus"
-    return new ValidatingCommandBus($b, $c, $c->make('Radweb\Commanding\CommandTranslator');
+    return new ValidatingCommandBusDecorator($b, $c, $c->make('Radweb\Commanding\CommandTranslator');
 });
 
 // Decorate with the authenticating command bus, providing its dependencies
 $container->extend('Radweb\Commanding\CommandBus', function(CommandBus $b, Container $c) {
     // $b is now "ValidatingCommandBus"
-    return new AuthenticatingCommandBus($b, $c, $c->make('Radweb\Commanding\CommandTranslator');
+    return new AuthenticatingCommandBusDecorator($b, $c, $c->make('Radweb\Commanding\CommandTranslator');
 });
 
 // Decorate with the logging command bus, providing its dependencies
 $container->extend('Radweb\Commanding\CommandBus', function(CommandBus $b, Container $c) {
     // $b is now "AuthenticatingCommandBus"
-    return new LoggingCommandBus($b, $c->make('Psr\Log\LoggerInterface');
+    return new LoggingCommandBusDecorator($b, $c->make('Psr\Log\LoggerInterface');
 });
 
-// 'Radweb\Commanding\CommandBus' is now 'LoggerInterface', which wraps 'AuthenticatingCommandBus', which wraps 'ValidatingCommandBus', which wraps 'BasicCommandBus'
+// 'Radweb\Commanding\CommandBus' is now 'LoggerCommandBusDecorator', which wraps 'AuthenticatingCommandBusDecorator', which wraps 'ValidatingCommandBusDecorator', which wraps 'BasicCommandBus'
 ```
 
-You can write your own Command Bus, or a decorator for it, simply by implementing the `Radweb\Commanding\CommandBus` interface. If you're decorating an existing bus, you should accept a `CommandBus` as a dependency and forward calls onto it.
+You can write your own Command Bus, or a decorator for it, simply by implementing the `Radweb\Commanding\CommandBus` interface. If you're writing a decorator, you should accept a `CommandBus` as a dependency and forward calls onto it.
 
 ## Logging
 
-The `LoggingCommandBus` expects an implementation of `Psr\Log\LoggerInterface`.
+The `LoggingCommandBusDecorator` expects an implementation of `Psr\Log\LoggerInterface`.
 
